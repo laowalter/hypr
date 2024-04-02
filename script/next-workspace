@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+
+# This script is used to find the next workspace ID in the focused monitor
+
+# Get the focused workspace and monitor
+focusedWorkspace=$(hyprctl -j activeworkspace | jq -r '.name')
+focusedMonitor=$(hyprctl -j activeworkspace | jq '.monitorID')
+# echo "focusedMon is: $focusedMonitor"
+# Get the workspaces ID in the focused monitor
+focusedWorkspaces=$(hyprctl -j workspaces|jq -r --arg monitor "$focusedMonitor" '.[]|select(.monitorID|tostring == $monitor).name')
+# echo "focusedWorkspaces is: $focusedWorkspaces"
+
+SAVEIFS=$IFS
+IFS=$'\n' 
+focusedWorkspacesArray=($focusedWorkspaces)
+IFS=$SAVEIFS
+
+index=0
+for (( i=0; i<${#focusedWorkspacesArray[@]}; i++ )) do
+    if [[ $focusedWorkspace == ${focusedWorkspacesArray[i]} ]]; then
+        # echo "looped workspaces: ${focusedWorkspacesArray[i]}"
+        # echo "focusedWorkspace: $focusedWorkspace"
+        index=$i  
+        break
+    fi
+done
+
+next_index=$(( (index + 1) % ${#focusedWorkspacesArray[@]} ))
+echo "${focusedWorkspacesArray[next_index]}"
+
+# workspaces=$(hyprctl -j workspaces|jq -r '.[]|select(.monitorID=="$focusedMonitor").name'
+# echo $workspaces
+# # Find the index of current_workspace in the workspace array
+# index=1
+# for ((i=0; i<${#workspaces[@]}; i++)); do
+#     if [[ "${workspaces[i]}" == "$focusedWorkspace" ]]; then
+#         index=$i
+#         break
+#     fi
+# done
+#
+# # Calculate the index of the next workspace
+# next_index=$(( (index + 1) % ${#workspaces[@]} ))
+#
+# # Echo the next workspace ID
+ # echo "${focusedWorkspacesArray[next_index]}"
