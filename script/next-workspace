@@ -5,10 +5,9 @@
 # Get the focused workspace and monitor
 focusedWorkspace=$(hyprctl -j activeworkspace | jq -r '.name')
 focusedMonitor=$(hyprctl -j activeworkspace | jq '.monitorID')
-# echo "focusedMon is: $focusedMonitor"
+
 # Get the workspaces ID in the focused monitor
-focusedWorkspaces=$(hyprctl -j workspaces|jq -r --arg monitor "$focusedMonitor" '.[]|select(.monitorID|tostring == $monitor).name')
-# echo "focusedWorkspaces is: $focusedWorkspaces"
+focusedWorkspaces=$(hyprctl -j workspaces|jq 'sort_by(.name)'|jq -r --arg monitor "$focusedMonitor" '.[]|select(.monitorID|tostring == $monitor).name')
 
 SAVEIFS=$IFS
 IFS=$'\n' 
@@ -27,20 +26,3 @@ done
 
 next_index=$(( (index + 1) % ${#focusedWorkspacesArray[@]} ))
 echo "${focusedWorkspacesArray[next_index]}"
-
-# workspaces=$(hyprctl -j workspaces|jq -r '.[]|select(.monitorID=="$focusedMonitor").name'
-# echo $workspaces
-# # Find the index of current_workspace in the workspace array
-# index=1
-# for ((i=0; i<${#workspaces[@]}; i++)); do
-#     if [[ "${workspaces[i]}" == "$focusedWorkspace" ]]; then
-#         index=$i
-#         break
-#     fi
-# done
-#
-# # Calculate the index of the next workspace
-# next_index=$(( (index + 1) % ${#workspaces[@]} ))
-#
-# # Echo the next workspace ID
- # echo "${focusedWorkspacesArray[next_index]}"
