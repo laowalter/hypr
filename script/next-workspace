@@ -15,11 +15,21 @@ focusedWorkspacesArray=($focusedWorkspaces)
 IFS=$SAVEIFS
 
 index=0
+for (( i=0; i<${#focusedWorkspacesArray[@]}; i++ )); do
+    if [[ "${focusedWorkspacesArray[i]}" =~ "special:magic" ]]; then
+        unset focusedWorkspacesArray[index]
+    else
+        index=$((index+1))
+    fi
+done
+
+index=0
 for (( i=0; i<${#focusedWorkspacesArray[@]}; i++ )) do
+
     if [[ $focusedWorkspace == ${focusedWorkspacesArray[i]} ]]; then
-        # echo "looped workspaces: ${focusedWorkspacesArray[i]}"
-        # echo "focusedWorkspace: $focusedWorkspace"
+        echo "focusedWorkspace: $focusedWorkspace" >> /home/quant/tmp/log
         index=$i  
+        echo "index: $index" >> /home/quant/tmp/log
         break
     fi
 done
