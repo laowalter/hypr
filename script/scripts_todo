@@ -1,6 +1,0 @@
-hyprctl keyword monitor DP-1,preferred,auto,1,transform,1
-hyprctl keyword monitor DP-1,preferred,auto,1
-
-emerge wev
-
-tab-- cycling between workspaces

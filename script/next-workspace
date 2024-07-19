@@ -7,32 +7,29 @@ focusedWorkspace=$(hyprctl -j activeworkspace | jq -r '.name')
 focusedMonitor=$(hyprctl -j activeworkspace | jq '.monitorID')
 
 # Get the workspaces ID in the focused monitor
-focusedWorkspaces=$(hyprctl -j workspaces|jq 'sort_by(.name)'|jq -r --arg monitor "$focusedMonitor" '.[]|select(.monitorID|tostring == $monitor).name')
+focusedWorkspaces=$(hyprctl -j workspaces | jq 'sort_by(.name)' | jq -r --arg monitor "$focusedMonitor" '.[]|select(.monitorID|tostring == $monitor).name')
 
 SAVEIFS=$IFS
-IFS=$'\n' 
+IFS=$'\n'
 focusedWorkspacesArray=($focusedWorkspaces)
 IFS=$SAVEIFS
 
 index=0
-for (( i=0; i<${#focusedWorkspacesArray[@]}; i++ )); do
+for ((i = 0; i < ${#focusedWorkspacesArray[@]}; i++)); do
     if [[ "${focusedWorkspacesArray[i]}" =~ "special:magic" ]]; then
         unset focusedWorkspacesArray[index]
     else
-        index=$((index+1))
+        index=$((index + 1))
     fi
 done
 
 index=0
-for (( i=0; i<${#focusedWorkspacesArray[@]}; i++ )) do
-
+for ((i = 0; i < ${#focusedWorkspacesArray[@]}; i++)); do
     if [[ $focusedWorkspace == ${focusedWorkspacesArray[i]} ]]; then
-        echo "focusedWorkspace: $focusedWorkspace" >> /home/quant/tmp/log
-        index=$i  
-        echo "index: $index" >> /home/quant/tmp/log
+        index=$i
         break
     fi
 done
 
-next_index=$(( (index + 1) % ${#focusedWorkspacesArray[@]} ))
+next_index=$(((index + 1) % ${#focusedWorkspacesArray[@]}))
 echo "${focusedWorkspacesArray[next_index]}"
